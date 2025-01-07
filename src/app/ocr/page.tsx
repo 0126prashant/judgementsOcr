@@ -33,7 +33,7 @@ export default function OCR() {
       formData.append("file", selectedImage);
 
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/ocr`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/ai/ocr`,
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },
