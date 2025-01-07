@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import axios from "axios";
 
 export default function OCR() {
@@ -59,11 +60,21 @@ export default function OCR() {
             } rounded-lg flex items-center justify-center overflow-hidden shadow-md bg-white`}
           >
             {previewUrl ? (
-              <img
-                src={previewUrl}
-                alt="Uploaded Preview"
-                className="max-h-[500px] object-contain"
-              />
+            //  eslint-disable @next/next/no-img-element 
+       <img
+         src={previewUrl}
+         alt="Uploaded Preview"
+          className="max-h-[500px] object-contain rounded-lg"
+        />
+        // eslint-disable @next/next/no-img-element 
+
+              // <Image
+              //   src={previewUrl}
+              //   alt="Uploaded Preview"
+              //   width={500}
+              //   height={500}
+              //   className="object-contain max-h-[500px]"
+              // />
             ) : (
               <div
                 className="text-center cursor-pointer"
@@ -120,7 +131,8 @@ export default function OCR() {
           ) : (
             <div className="w-full h-[500px] bg-gray-50 p-6 rounded-lg shadow-inner flex items-center justify-center">
               <p className="text-gray-500 text-lg">
-                Upload an image and click "Extract Text" to see results here.
+                Upload an image and click &quot;Extract Text&quot; to see
+                results here.
               </p>
             </div>
           )}
