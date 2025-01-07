@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import axios from "axios";
 
 export default function Judgments() {
   const [courtName, setCourtName] = useState("");
@@ -8,50 +9,68 @@ export default function Judgments() {
   const [overwrite, setOverwrite] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [message, setMessage] = useState("");
+  const [showPreview, setShowPreview] = useState(false);
+  const [responseMessage, setResponseMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      setFiles(Array.from(e.target.files)); // Convert FileList to an array
-      setSelectedFile(null); // Reset selected file
+      setFiles(Array.from(e.target.files));
+      setSelectedFile(null);
+      setShowPreview(false);
     }
   };
 
   const handleFileClick = (file: File) => {
-    setSelectedFile(file); // Set the clicked file as the selected file
+    setSelectedFile(file);
+    setShowPreview(true);
   };
 
   const handleSubmit = async () => {
     if (!courtName || !year || files.length === 0) {
-      setMessage("Please fill out all fields and upload at least one file.");
+      setResponseMessage("Please fill out all fields and upload at least one file.");
       return;
     }
 
-    setMessage("Files are being uploaded...");
+    setLoading(true);
+    setResponseMessage("");
+
     try {
       const formData = new FormData();
       formData.append("courtName", courtName);
       formData.append("year", year);
       formData.append("overwrite", overwrite.toString());
+      files.forEach((file) => formData.append("files", file));
 
-      files.forEach((file) => {
-        formData.append("files", file);
-      });
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/ai/upload_judgements`,
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
 
-      // Replace this with your backend API call
-      console.log("Form Data submitted:", formData);
-
-      setMessage("Files uploaded successfully!");
+      setResponseMessage(response.data.message || "Files uploaded successfully!");
     } catch (error) {
-      console.error("Error uploading files:", error);
-      setMessage("Error uploading files. Please try again.");
+      setResponseMessage("Error uploading files. Please try again.");
+      console.error(error);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-8 flex gap-8">
-      {/* Form Section */}
-      <div className="w-1/2 bg-white p-8 rounded-xl shadow-md">
+    <div
+      className={`min-h-screen bg-gray-50 py-12 px-8 flex ${
+        showPreview ? "gap-8" : "justify-center"
+      }`}
+    >
+      {/* Main UI */}
+      <div
+        className={`bg-white p-8 rounded-xl shadow-md transition-all ${
+          showPreview ? "w-1/2" : "w-full"
+        }`}
+      >
         <h1 className="text-3xl font-bold text-blue-800 mb-6">Upload Judgments</h1>
         <form
           onSubmit={(e) => e.preventDefault()}
@@ -76,7 +95,12 @@ export default function Judgments() {
 
           {/* Year Input */}
           <div>
-            <label className="block text-gray-700 font-medium mb-2">Year</label>
+            <label className="block text-gray-700 font-medium mb-2">
+              Year
+              <span className="block text-sm text-gray-500">
+                You can select or write a year between 1900 to 2025.
+              </span>
+            </label>
             <input
               type="number"
               min={1900}
@@ -99,6 +123,11 @@ export default function Judgments() {
               />
               Overwrite Existing Documents
             </label>
+            {overwrite && (
+              <p className="mt-2 text-red-600 text-sm">
+                Warning: This will replace existing documents.
+              </p>
+            )}
           </div>
 
           {/* File Upload */}
@@ -115,6 +144,9 @@ export default function Judgments() {
             />
             {files.length > 0 && (
               <ul className="mt-4">
+                <p className="text-gray-500 text-sm mb-2">
+                  Click on a file to preview it.
+                </p>
                 {files.map((file, index) => (
                   <li
                     key={index}
@@ -132,37 +164,50 @@ export default function Judgments() {
           <button
             type="button"
             onClick={handleSubmit}
-            className="w-full bg-blue-600 text-white py-3 rounded-lg shadow-lg hover:bg-blue-700 transition-all"
+            disabled={loading}
+            className={`w-full py-3 rounded-lg shadow-lg transition-all ${
+              loading
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-blue-600 text-white hover:bg-blue-700"
+            }`}
           >
-            Submit
+            {loading ? "Uploading..." : "Submit"}
           </button>
         </form>
 
-        {/* Message Display */}
-        {message && (
+        {/* API Response */}
+        {responseMessage && (
           <p
             className={`mt-4 text-center ${
-              message.includes("Error") ? "text-red-600" : "text-green-600"
+              responseMessage.includes("Error")
+                ? "text-red-600"
+                : "text-green-600"
             }`}
           >
-            {message}
+            {responseMessage}
           </p>
         )}
       </div>
 
       {/* File Preview Section */}
-      <div className="w-1/2 bg-white p-8 rounded-xl shadow-md">
-        <h2 className="text-2xl font-bold text-gray-800 mb-4">File Preview</h2>
-        {selectedFile ? (
+      {showPreview && (
+        <div className="w-1/2 bg-white p-8 rounded-xl shadow-md">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-2xl font-bold text-gray-800">File Preview</h2>
+            <button
+              className="text-red-600 hover:underline"
+              onClick={() => setShowPreview(false)}
+            >
+              Close Preview
+            </button>
+          </div>
           <iframe
-            src={URL.createObjectURL(selectedFile)}
+            src={selectedFile ? URL.createObjectURL(selectedFile) : ""}
             className="w-full h-[600px] border border-gray-300 rounded-lg"
             title="PDF Preview"
           />
-        ) : (
-          <p className="text-gray-600">Click on a file to preview it here.</p>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }
