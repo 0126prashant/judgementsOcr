@@ -74,7 +74,7 @@ export default function Judgments() {
       }
   
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/v1/api/ai/upload_judgements`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/ai/upload_judgements`,
         formData,
         {
           headers: { 
