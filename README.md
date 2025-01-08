@@ -1,36 +1,61 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Judgments & OCR Application
 
-## Getting Started
+This is a Next.js-based application providing two main functionalities:
 
-First, run the development server:
+1. **Judgments Page**: Upload and manage multiple PDF files with options to select court type, year, and overwrite settings. Preview individual files before submission.
+2. **OCR Page**: Upload a single image, view it, and extract text using OCR. Displays the extracted text alongside the uploaded image.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Table of Contents
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- [Features](#features)
+- [Technologies Used](#technologies-used)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Screenshots](#screenshots)
+- [Environment Variables](#environment-variables)
+- [Contributing](#contributing)
+- [License](#license)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## Features
 
-To learn more about Next.js, take a look at the following resources:
+### Judgments Page
+- Upload multiple PDF files.
+- Preview files before submission.
+- Options:
+  - Select a court: **Supreme Court** or **High Court**.
+  - Choose a year between 1900 and 2025 (with guidance).
+  - Overwrite existing documents with a warning prompt.
+- Submit files to the backend and display the API response.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### OCR Page
+- Upload a single image using drag-and-drop or file input.
+- Preview the uploaded image in a large, styled container.
+- Extract text using a **"Proceed"** button.
+- Show loading animation while processing.
+- Display the extracted text in a visually appealing container.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## Technologies Used
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- **Frontend**: React, Tailwind CSS
+- **Backend**: Next.js API Routes (for demonstration)
+- **HTTP Requests**: Axios
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## Installation
+
+1. Clone the repository:
+   ```bash
+   git clone <repository-url>
+2. Install dependencies:
+    npm install
+3. Start the development server:
+     npm run dev
+ 
+
